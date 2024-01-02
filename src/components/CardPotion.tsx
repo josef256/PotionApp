@@ -1,14 +1,18 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
-
-export default function CardPotion(): JSX.Element {
+import type { dataType } from "./ListPotion";
+export default function CardPotion({
+	content,
+}: {
+	content: dataType;
+}): JSX.Element {
 	return (
 		<View style={style.container}>
 			<View>
-				<Text style={style.titleStyle}>im a date</Text>
+				<Text style={style.titleStyle}>{content.date}</Text>
 			</View>
 			<View>
-				<Text>percent</Text>
+				<Text>{content.percentage}</Text>
 			</View>
 		</View>
 	);
@@ -16,15 +20,17 @@ export default function CardPotion(): JSX.Element {
 const style = StyleSheet.create({
 	container: {
 		flexDirection: "row",
-		width: "100%",
 		justifyContent: "space-between",
-		backgroundColor: "red",
+		alignItems: "center",
 		padding: 5,
-		marginBottom: 15, 
+		height: 80,
+		marginBottom: 15,
+		borderWidth: 0.1,
+		borderColor: "#f3f4f6",
+		backgroundColor: "white",
 	},
 	titleStyle: {
 		fontSize: 20,
-		fontWeight:"bold",
-		fontFamily: "Ambassador",
+		fontWeight: "bold",
 	},
 });

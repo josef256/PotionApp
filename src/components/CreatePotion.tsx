@@ -10,6 +10,5 @@ export default function CreatePotion(): JSX.Element {
 
 const style = StyleSheet.create({
 	container:{
-		alignItems:"space-between"
 	}
 })

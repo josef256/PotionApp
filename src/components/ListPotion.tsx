@@ -1,20 +1,51 @@
 import React from "react";
-import { Text, ScrollView, StyleSheet } from "react-native";
+import { Text, View, StyleSheet, FlatList } from "react-native";
 import CardPotion from "./CardPotion";
-const data = ["title 1", "title 2"];
+import AddButtonFab from "./AddButtonFab";
+import { useModalContext } from "../tools/ModalProvider";
+
+export type dataType = {
+	date: string;
+	percentage: number;
+};
+
+const data: dataType[] = [
+	{ date: "21 september 2023", percentage: 30 },
+	{ date: "01 november 2023", percentage: 5 },
+];
 export default function ListPotion(): JSX.Element {
+	const { isAddModalVisible } = useModalContext();
+	console.log("isAddModalVisible", isAddModalVisible);
 	return (
-		<ScrollView contentContainerStyle={style.container}>
-			{data.map((card, index) => (
-				<CardPotion key={{ index }} />
-			))}
-		</ScrollView>
+		<View style={style.container}>
+			<FlatList
+				data={data}
+				renderItem={({ item }: { item: dataType }) => (
+					<CardPotion content={item} />
+				)}
+				keyExtractor={(element) => element.date}
+				style={style.ListWrapper}
+			/>
+			<View
+				style={{
+					position: "absolute",
+					right: "10%",
+					bottom: "10%",
+				}}
+			>
+				<AddButtonFab />
+			</View>
+		</View>
 	);
 }
 const style = StyleSheet.create({
 	container: {
 		flex: 1,
-		justifyContent: "center",
+		justifyContent: "flex-start",
 		alignItems: "center",
+		backgroundColor: "#f3f4f6",
+	},
+	ListWrapper: {
+		width: "100%",
 	},
 });
