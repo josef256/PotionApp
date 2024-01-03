@@ -14,8 +14,7 @@ const data: dataType[] = [
 	{ date: "01 november 2023", percentage: 5 },
 ];
 export default function ListPotion(): JSX.Element {
-	const { isAddModalVisible } = useModalContext();
-	console.log("isAddModalVisible", isAddModalVisible);
+	const { isAddModalVisible, setIsAddModalVisible } = useModalContext();
 	return (
 		<View style={style.container}>
 			<FlatList
@@ -33,7 +32,7 @@ export default function ListPotion(): JSX.Element {
 					bottom: "10%",
 				}}
 			>
-				<AddButtonFab />
+				<AddButtonFab displayModal={setIsAddModalVisible} />
 			</View>
 		</View>
 	);

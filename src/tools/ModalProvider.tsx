@@ -1,17 +1,26 @@
-import React, { createContext, useState, useContext } from "react";
+import React, {
+	createContext,
+	useState,
+	useContext,
+	SetStateAction,
+	Dispatch,
+} from "react";
 
 type modalContextType = {
 	isAddModalVisible: boolean;
+	setIsAddModalVisible: Dispatch<SetStateAction<boolean>>;
+	setIsDetailModalVisibile: Dispatch<SetStateAction<boolean>>;
 	isDetailModalVisibile: boolean;
 };
 
-const ModalContext = createContext<modalContextType | undefined>();
+const ModalContext = createContext<modalContextType | undefined>(undefined);
 
 export const ModalProvider: React.FC<{
 	children: JSX.Element;
 }> = ({ children }): JSX.Element => {
-	const [isAddModalVisible, setIsAddModalVisible] = useState(false);
-	const [isDetailModalVisibile, setIsDetailModalVisibile] = useState(false);
+	const [isAddModalVisible, setIsAddModalVisible] = useState<boolean>(false);
+	const [isDetailModalVisibile, setIsDetailModalVisibile] =
+		useState<boolean>(false);
 
 	return (
 		<ModalContext.Provider
@@ -19,6 +28,7 @@ export const ModalProvider: React.FC<{
 				isAddModalVisible,
 				isDetailModalVisibile,
 				setIsDetailModalVisibile,
+				setIsAddModalVisible,
 			}}
 		>
 			{children}

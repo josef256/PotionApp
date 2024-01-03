@@ -6,6 +6,8 @@ import * as SplashScreen from "expo-splash-screen";
 import { useCallback } from "react";
 import { View } from "react-native";
 import { ModalProvider } from "./src/tools/ModalProvider";
+import CreatePotion from "./src/components/CreatePotion";
+
 SplashScreen.preventAutoHideAsync();
 export default function App() {
   const [fontsLoaded] = useFonts({
@@ -31,6 +33,7 @@ export default function App() {
         <NavigationContainer>
           <Navigation />
         </NavigationContainer>
+        <CreatePotion />
       </ModalProvider>
     </View>
   );

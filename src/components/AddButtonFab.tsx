@@ -1,8 +1,12 @@
-import React from "react";
+import React, { SetStateAction, Dispatch } from "react";
 import { Text, Pressable } from "react-native";
 import AddIcon from "../../assets/add-icon.svg";
 
-export default function AddButtonFab(): JSX.Element {
+export default function AddButtonFab({
+	displayModal,
+}: {
+	displayModal: Dispatch<SetStateAction<boolean>>;
+}): JSX.Element {
 	return (
 		<Pressable
 			style={{
@@ -12,7 +16,7 @@ export default function AddButtonFab(): JSX.Element {
 				padding: 15,
 				justifyContent: "center",
 				alignItems: "center",
-				backgroundColor:"#f97316"
+				backgroundColor: "#f97316",
 			}}
 		>
 			<AddIcon width={30} height={30} />
