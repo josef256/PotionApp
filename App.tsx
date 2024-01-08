@@ -6,6 +6,7 @@ import * as SplashScreen from "expo-splash-screen";
 import { useCallback } from "react";
 import { View } from "react-native";
 import { ModalProvider } from "./src/tools/ModalProvider";
+import { TaskProvider } from "./src/tools/TaskProvider";
 import CreatePotion from "./src/components/CreatePotion";
 
 SplashScreen.preventAutoHideAsync();
@@ -29,12 +30,14 @@ export default function App() {
       style={{ flex: 1, backgroundColor: "#f3f4f6" }}
       onLayout={onLayoutRootView}
     >
+    <TaskProvider>
       <ModalProvider>
         <NavigationContainer>
           <Navigation />
-        </NavigationContainer>
         <CreatePotion />
+        </NavigationContainer>
       </ModalProvider>
+      </TaskProvider>
     </View>
   );
 }
