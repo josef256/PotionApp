@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useRef } from "react";
 import {
 	Text,
 	View,
@@ -10,6 +10,8 @@ import {
 } from "react-native";
 import DateTimePicker from "react-native-ui-datepicker";
 import ConfirmIcon from "../../assets/confirm-icon.svg";
+import TrashIcon from "../../assets/trash-icon.svg";
+import CalendarIcon from "../../assets/calendar-icon.svg";
 import RejectIcon from "../../assets/reject-icon.svg";
 import "react-native-get-random-values";
 import { v4 as uuidv4 } from "uuid";
@@ -21,15 +23,14 @@ type taskInputType = {
 	validated: boolean;
 };
 export default function CreatePotion(): JSX.Element {
+	const scrollViewRef = useRef(null);
 	const [isCalendarVisible, setIsCalendarVisible] = useState<boolean>(false);
 	const [isInputVisible, setIsInputVisible] = useState<boolean>(false);
 	const [selectedDate, setSelectedDate] = useState<string>("");
-	const [taskInputs, setTaskInputs] = useState<taskInputType[]>([]);
+	const [taskInputs, setTaskInputs] = useState<taskInputType[]>([
+		{ id: uuidv4(), taskName: "", validated: false },
+	]);
 	const { tasks, setTasks } = useTaskContext();
-
-	useEffect(() => {
-		console.log("remote tasks", tasks);
-	}, [tasks]);
 
 	const datePress = (): void => {
 		setIsCalendarVisible(!isCalendarVisible);
@@ -39,9 +40,12 @@ export default function CreatePotion(): JSX.Element {
 			...taskInputs,
 			{ id: uuidv4(), taskName: "", validated: false },
 		]);
+		setTimeout(() => {
+			scrollViewRef.current.scrollToEnd({ animated: true });
+		}, 10);
 	};
 	const changeTaskInputValue = (text: string, index: number): void => {
-			const newEntries: taskInputType[]  = [...taskInputs];
+		const newEntries: taskInputType[] = [...taskInputs];
 		newEntries[index] = {
 			...newEntries[index],
 			taskName: text,
@@ -57,60 +61,84 @@ export default function CreatePotion(): JSX.Element {
 		setTaskInputs(newEntries);
 	};
 	const synchronizeTask = (): void => {
-		setTasks(taskInputs);
+		if (taskInputs.findIndex((elem) => !elem.validated) == -1) {
+			setTasks(taskInputs);
+		} else {
+		}
 	};
-	console.log("teskinput", taskInputs);
+	const RemoveTask = (index: number): void => {
+		const newEntries: taskInputType[] = [...taskInputs];
+		newEntries.splice(index, 1);
+		setTaskInputs(newEntries);
+	};
 	return (
 		<View style={style.container}>
-			<ScrollView
-				contentContainerStyle={style.contentContainer}
-				style={style.content}
-			>
-				<View>
-					<Text>Add Task</Text>
+			<View style={style.content}>
+				<ScrollView
+					contentContainerStyle={style.contentContainer}
+					style={style.contentWrapper}
+					ref={scrollViewRef}
+				>
 					<View>
-						<Pressable onPress={datePress}>
-							<Text>Select a date</Text>
-						</Pressable>
-						<View style={style.datepicker}>
-							{isCalendarVisible && <DateTimePicker />}
-						</View>
-					</View>
-					<View>
-						<View>
-							<Pressable onPress={addTaskInput}>
-								<Text>Add Task</Text>
+						<Text style={{ fontSize: 12, color: "#9ca3af" }}>
+							Task Manager
+						</Text>
+						<View style={style.calendarSection}>
+							<Pressable
+								style={style.calendarButton}
+								onPress={datePress}
+							>
+								<CalendarIcon width={30} height={30} />
+								<Text style={style.calendarText}>
+									Select a date
+								</Text>
 							</Pressable>
-						</View>
-						{taskInputs.map((element, index) => (
-							<View style={style.inputContainer} key={element.id}>
-								<TextInput
-									style={style.input}
-									value={element.taskName}
-									onChangeText={(text) =>
-										changeTaskInputValue(text, index)
-									}
-								/>
-								<View style={style.actionButtonContainer}>
-									<Pressable
-										onPress={() => approveTask(index)}
-									>
-										<ConfirmIcon width={30} height={30} />
-									</Pressable>
-									<Pressable>
-										<RejectIcon width={30} height={30} />
-									</Pressable>
+							{isCalendarVisible && (
+								<View style={style.datepicker}>
+									<DateTimePicker mode="date" />
 								</View>
+							)}
+						</View>
+						<View style={style.inputWrapper}>
+							{taskInputs.map((element, index) => (
+								<View
+									style={style.inputContainer}
+									key={element.id}
+								>
+									<TextInput
+										style={style.input}
+										value={element.taskName}
+										placeholder={"Enter Task name..."}
+										onChangeText={(text) =>
+											changeTaskInputValue(text, index)
+										}
+									/>
+									<View style={style.actionButtonContainer}>
+										<Pressable
+											onPress={() => RemoveTask(index)}
+										>
+											<TrashIcon width={30} height={30} />
+										</Pressable>
+									</View>
+								</View>
+							))}
+							<View>
+								<Pressable onPress={addTaskInput}>
+									<Text>Add Task</Text>
+								</Pressable>
 							</View>
-						))}
+						</View>
 					</View>
-				</View>
+				</ScrollView>
 				<View style={style.actionButton}>
 					<Pressable onPress={synchronizeTask}>
-						<Text>Add Task</Text>
+						<Text>Save</Text>
 					</Pressable>
 				</View>
-			</ScrollView>
+				<View style={style.closeWrapper}>
+					<RejectIcon width={30} height={30} />
+				</View>
+			</View>
 		</View>
 	);
 }
@@ -127,15 +155,25 @@ const style = StyleSheet.create({
 	contentContainer: {
 		padding: 15,
 		backgroundColor: "white",
-		minHeight: "50%",
 		justifyContent: "space-between",
+		borderRadius: 15,
 	},
 	content: {
 		width: "90%",
-		maxHeight: "50%",
+		minHeight: "70%",
 		backgroundColor: "white",
+		borderWidth: 2,
+		borderColor: "#e5e7eb",
+		borderRadius: 15,
 	},
-	datepicker: {},
+	contentWrapper: {
+		height: "70%",
+	},
+	datepicker: {
+		borderWidth: 1,
+		borderRadius: 15,
+		marginTop: 15,
+	},
 	inputContainer: {
 		justifyContent: "space-between",
 		alignItems: "center",
@@ -149,10 +187,54 @@ const style = StyleSheet.create({
 	},
 	input: {
 		borderWidth: 1,
-		backgroundColor: "red",
-		width: "70%",
+		borderColor: "#e5e7eb",
+		backgroundColor: "#f3f4f6",
+		width: "80%",
+		padding: 5,
+		borderWidth: 1,
+		borderRadius: 15,
+		height: 40,
 	},
 	actionButton: {
 		alignItems: "center",
+		justifyContent: "center",
+		borderBottomLeftRadius: 15,
+		borderBottomRightRadius: 15,
+		padding: 15,
+		borderColor: "#e5e7eb",
+		borderTopWidth: 1,
+		backgroundColor: "#f3f4f6",
+	},
+	calendarSection: {
+		marginTop: 15,
+		marginBottom: 15,
+	},
+	calendarButton: {
+		flexDirection: "row",
+		justifyContent: "flex-start",
+		alignItems: "center",
+		borderWidth: 1,
+		borderRadius: 15,
+		borderColor: "#e5e7eb",
+		backgroundColor: "#f3f4f6",
+		padding: 5,
+	},
+	calendarText: {
+		fontSize: 18,
+		marginLeft: 5,
+		color: "#3f3f46",
+		fontWeight: "600",
+	},
+	inputWrapper: {
+		gap: 15,
+	},
+	closeWrapper: {
+		position: "absolute",
+		padding: 5,
+		borderRadius: 999,
+		borderWidth: 0.8,
+		backgroundColor: "white",
+		right: -10,
+		top: -15,
 	},
 });
